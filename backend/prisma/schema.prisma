@@ -1,0 +1,242 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // pooled connection, used by the running app
+  directUrl = env("DIRECT_URL")   // direct connection, used by migrations
+}
+
+enum AdminRole {
+  ADMIN
+  EDITOR
+}
+
+enum TrainerGender {
+  MALE
+  FEMALE
+}
+
+enum SessionType {
+  UNISEX
+  LADIES_ONLY
+}
+
+enum StockStatus {
+  IN_STOCK
+  OUT_OF_STOCK
+  ON_REQUEST
+}
+
+enum EnquiryType {
+  MEMBERSHIP
+  HYROX
+  YOGA
+  SUPPLEMENTS
+  STEAM_MASSAGE
+  LADIES_SESSIONS
+  GENERAL
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+model AdminUser {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         AdminRole @default(ADMIN)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// A single row (id = 1) holding the gym details.
+model BusinessProfile {
+  id          Int      @id @default(1)
+  name        String
+  marathiName String?
+  address     String
+  phone       String
+  googleRating Float?
+  reviewCount Int?
+  mapUrl      String?
+  openingInfo String?
+  updatedAt   DateTime @updatedAt
+}
+
+model Trainer {
+  id              Int           @id @default(autoincrement())
+  name            String        @unique
+  role            String?
+  gender          TrainerGender
+  isMainTrainer   Boolean       @default(false)
+  bio             String?
+  imageUrl        String?
+  specializations String[]
+  displayOrder    Int           @default(0)
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([isActive, displayOrder])
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  description String?
+  category    String?
+  imageUrl    String?
+  // Price in paise (1 rupee = 100 paise). Null = not supplied.
+  pricePaise  Int?
+  displayOrder Int     @default(0)
+  isActive    Boolean  @default(true)
+  // Shown in the homepage Services section.
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive, displayOrder])
+}
+
+model MembershipPlan {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  durationMonths Int
+  // Price in paise (1 rupee = 100 paise). Null shows "Contact for Pricing".
+  pricePaise   Int?
+  benefits     String[]
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model GymTiming {
+  id        Int         @id @default(autoincrement())
+  // 0 = Sunday ... 6 = Saturday
+  dayOfWeek Int
+  // 24-hour "HH:MM"
+  startTime String
+  endTime   String
+  sessionType SessionType
+  isActive  Boolean     @default(true)
+
+  @@index([dayOfWeek, startTime])
+}
+
+model Supplement {
+  id          Int         @id @default(autoincrement())
+  productName String
+  brand       String?
+  description String?
+  size        String?
+  pricePaise  Int?
+  stockStatus StockStatus @default(ON_REQUEST)
+  imageUrl    String?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Enquiry {
+  id            Int           @id @default(autoincrement())
+  fullName      String
+  phone         String
+  email         String?
+  enquiryType   EnquiryType   @default(GENERAL)
+  preferredVisitTime String?
+  message       String?
+  status        EnquiryStatus @default(NEW)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([status, createdAt])
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum PromoFormat {
+  POPUP
+  BANNER
+  CARD
+}
+
+enum PromoTheme {
+  DEFAULT
+  DIWALI
+  VALENTINES
+  NEW_YEAR
+  GANESH_CHATURTHI
+  ANNIVERSARY
+}
+
+enum PromoFrequency {
+  EVERY_VISIT
+  ONCE_PER_SESSION
+  ONCE_PER_DAY
+  ONCE_PER_WEEK
+  ONCE
+}
+
+// Real customer reviews only, with permission to publish.
+model Testimonial {
+  id           Int      @id @default(autoincrement())
+  displayName  String
+  quote        String
+  rating       Int?
+  photoUrl     String?
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([isActive, displayOrder])
+}
+
+// Gym equipment photos and videos only.
+model GalleryItem {
+  id           Int       @id @default(autoincrement())
+  mediaType    MediaType @default(IMAGE)
+  url          String
+  posterUrl    String?
+  caption      String?
+  displayOrder Int       @default(0)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([isActive, displayOrder])
+}
+
+model Promotion {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String?
+  terms       String?
+  imageUrl    String?
+  theme       PromoTheme     @default(DEFAULT)
+  emojis      String?
+  ctaText     String?
+  ctaUrl      String?
+  format      PromoFormat    @default(POPUP)
+  frequency   PromoFrequency @default(ONCE_PER_DAY)
+  priority    Int            @default(0)
+  startsAt    DateTime
+  endsAt      DateTime
+  // Drafts stay off the public site until switched on.
+  isActive    Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([isActive, startsAt, endsAt])
+}
