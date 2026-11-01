@@ -1,63 +1,60 @@
-/* Homepage hero: matte black, one cinematic 3D weight plate, lime used only as a light source and the CTA. */
-.hz-hero{
+/* Homepage hero: centered copy over a dim 3D weight plate. Matte black, lime only as a light source. */
+.hz-hero,
+header.hero-view{
   --hz-black:#101110; --hz-charcoal:#292B29; --hz-lime:#A6F238; --hz-white:#FFFFFF;
-  --size:clamp(230px, 74vw, 330px);
+}
+.hz-hero{
+  --size:min(106vw, 470px, 60vh); --size:min(106vw, 470px, 60svh);
   --thick:calc(var(--size) * .1);
   position:relative; isolation:isolate; overflow:hidden;
   min-height:100vh; min-height:100svh;
-  display:flex; flex-direction:column; justify-content:center;
-  padding:92px 0 36px;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  padding:92px 0 64px;
   background:var(--hz-black); color:var(--hz-white);
 }
 .hz-bg{
-  position:absolute; inset:0; z-index:-1;
+  position:absolute; inset:0; z-index:-1; overflow:hidden;
   background:
-    radial-gradient(ellipse 85% 42% at 50% 26%, rgba(255,255,255,.10), transparent 62%),
-    radial-gradient(circle at 50% 36%, rgba(166,242,56,.10), transparent 52%),
-    radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,.5) 100%),
-    linear-gradient(to bottom, transparent 72%, #070807 100%),
+    radial-gradient(ellipse 80% 50% at 50% 38%, rgba(255,255,255,.07), transparent 65%),
+    radial-gradient(circle at 50% 50%, rgba(166,242,56,.09), transparent 55%),
+    radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0,0,0,.55) 100%),
+    linear-gradient(to bottom, transparent 75%, #070807 100%),
     var(--hz-black);
 }
-.hz-inner{display:flex; flex-direction:column; align-items:stretch; gap:8px; position:relative;}
+/* two quiet concentric rings behind the plate: depth without clutter */
+.hz-bg::before,.hz-bg::after{
+  content:""; position:absolute; left:50%; top:50%; border-radius:50%; pointer-events:none;
+  transform:translate(-50%,-50%) scale(calc(1 + var(--p, 0) * .22));
+}
+.hz-bg::before{width:calc(var(--size) * 1.55); height:calc(var(--size) * 1.55); border:1px solid rgba(255,255,255,.07);}
+.hz-bg::after{width:calc(var(--size) * 1.95); height:calc(var(--size) * 1.95); border:1px solid rgba(166,242,56,.10);}
 
 /* ---------- copy ---------- */
-.hz-copy{position:relative; z-index:2; max-width:560px;}
-.hz-copy .eyebrow{color:var(--hz-lime); font-size:12px;}
-.hz-copy .eyebrow::before{background:var(--hz-lime);}
+.hz-copy{position:relative; z-index:2; width:100%; max-width:980px; transform:translate3d(0, calc(var(--p, 0) * -64px), 0); opacity:calc(1 - var(--p, 0) * 1.15);}
+.hz-scrim{
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(ellipse 62% 46% at 50% 50%, rgba(16,17,16,.68), rgba(16,17,16,.34) 58%, transparent 82%);
+}
+.hz-copy .eyebrow{display:inline-flex; align-items:center; gap:14px; color:var(--hz-lime); font-size:12px;}
+.hz-copy .eyebrow::before,.hz-copy .eyebrow::after{content:""; width:30px; height:1px; background:var(--hz-lime); opacity:.8;}
 .hz-hero h1{
-  margin:16px 0 0; font-size:clamp(38px, 11.5vw, 54px); font-weight:700; line-height:1; letter-spacing:.012em; color:var(--hz-white);
+  margin:16px 0 0; font-size:clamp(38px, min(12.5vw, 8.5vh), 60px); font-size:clamp(38px, min(12.5vw, 8.5svh), 60px);
+  font-weight:700; line-height:.9; letter-spacing:.012em; color:var(--hz-white);
+  text-shadow:0 2px 30px rgba(16,17,16,.6);
 }
-.hz-line{display:block; overflow:hidden; padding-bottom:.06em;}
-.hz-line > span{display:inline-block; transform:translateY(112%); transition:transform .95s var(--ease);}
-.hz-hero.loaded .hz-line > span{transform:none;}
-.hz-line:nth-child(2) > span{transition-delay:.12s;}
-.hz-line:nth-child(3) > span{transition-delay:.24s;}
-.hz-sub{margin:18px 0 0; max-width:42ch; color:rgba(255,255,255,.72); font-size:16px; line-height:1.6;}
-.hz-actions{display:flex; flex-direction:column; align-items:stretch; gap:6px; margin-top:26px;}
-.hz-hero .btn-primary{
-  background:var(--hz-lime); color:var(--hz-black); padding:17px 34px; font-size:15px; letter-spacing:.07em;
-  box-shadow:0 12px 40px -12px rgba(166,242,56,.55);
-}
-.hz-hero .btn-primary:hover{background:#b9f95a; box-shadow:0 14px 44px -10px rgba(166,242,56,.65);}
-.hz-link{
-  align-self:center; min-height:48px; display:inline-flex; align-items:center; padding:0 6px;
-  font-family:var(--f-display); font-weight:600; letter-spacing:.07em; text-transform:uppercase; font-size:14px;
-  color:rgba(255,255,255,.78); text-decoration:underline; text-decoration-color:rgba(255,255,255,.28); text-underline-offset:6px;
-  transition:color .25s ease, text-decoration-color .25s ease;
-}
-.hz-link:hover{color:var(--hz-lime); text-decoration-color:var(--hz-lime);}
-.hz-tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:22px;}
-.hz-tags .tag{color:rgba(255,255,255,.55); border-color:rgba(255,255,255,.14);}
-.hz-cue{display:none;}
+/* tight leading: line-height .84 plus .04em padding each side keeps capitals and full stops from being clipped */
+.hz-line{display:block; overflow:hidden; line-height:.84; padding:.04em 0;}
+.hz-line > span{display:inline-block;}
+.hz-sub{margin:22px auto 0; max-width:44ch; color:rgba(255,255,255,.76); font-size:16px; line-height:1.6;}
 
-/* ---------- stage: the plate ---------- */
+/* ---------- stage: the plate, behind the text ---------- */
 .hz-stage{
-  position:relative; width:100%; height:clamp(260px, 40vh, 380px); height:clamp(260px, 40svh, 380px);
-  display:grid; place-items:center; perspective:1300px; touch-action:pan-y;
+  position:absolute; inset:0; z-index:0; display:grid; place-items:center; perspective:1400px; pointer-events:none;
+  opacity:.54; transform:scale(calc(1 + var(--p, 0) * .12));
 }
 .hz-halo{
   position:absolute; left:50%; top:50%; width:calc(var(--size) * 1.7); height:calc(var(--size) * 1.7); transform:translate(-50%,-50%);
-  background:radial-gradient(circle, rgba(166,242,56,.20) 0, rgba(166,242,56,.07) 36%, transparent 66%);
+  background:radial-gradient(circle, rgba(166,242,56,.27) 0, rgba(166,242,56,.09) 36%, transparent 66%);
 }
 .hz-sweep{
   position:absolute; left:50%; top:50%; width:calc(var(--size) * 1.14); height:calc(var(--size) * 1.14); margin:calc(var(--size) * -.57) 0 0 calc(var(--size) * -.57);
@@ -67,28 +64,15 @@
           mask:radial-gradient(circle, transparent 0 66%, #000 68% 70.5%, transparent 74%);
   opacity:.75;
 }
-.hz-floor{
-  position:absolute; left:50%; top:calc(50% + var(--size) * .54); width:calc(var(--size) * 1.15); height:calc(var(--size) * .17);
-  transform:translateX(-50%);
-  background:radial-gradient(ellipse, rgba(0,0,0,.75) 0, rgba(0,0,0,.35) 40%, transparent 70%);
-}
-.hz-floor::after{
-  content:""; position:absolute; inset:18% 14%;
-  background:radial-gradient(ellipse, rgba(166,242,56,.26), transparent 70%);
-}
+.hz-floor{display:none;}
 .hz-enter,.hz-tilt,.hz-float,.hz-spin,.hz-plate{transform-style:preserve-3d;}
 .hz-plate{position:relative; width:var(--size); height:var(--size);}
 .hz-spin{transform:rotateX(8deg) rotateY(-24deg);}
-.hz-tilt{transform:rotateX(calc(var(--py, 0) * -5deg)) rotateY(calc(var(--px, 0) * 8deg));}
-.hz-slice{
-  position:absolute; inset:0; border-radius:50%; background:#262826;
-  transform:translateZ(calc(var(--thick) * var(--z)));
-}
+.hz-tilt{transform:rotateX(calc(var(--py, 0) * -5deg)) rotateY(calc(var(--px, 0) * 8deg + var(--p, 0) * 36deg));}
+.hz-slice{position:absolute; inset:0; border-radius:50%; background:#262826; transform:translateZ(calc(var(--thick) * var(--z)));}
 .hz-slice.alt{background:#2e312e;}
 .hz-slice.seam{background:#2a2c2a; box-shadow:0 0 0 1.5px rgba(166,242,56,.7), 0 0 26px rgba(166,242,56,.28);}
-.hz-face{
-  position:absolute; inset:0; border-radius:50%; backface-visibility:hidden; -webkit-backface-visibility:hidden; overflow:hidden;
-}
+.hz-face{position:absolute; inset:0; border-radius:50%; backface-visibility:hidden; -webkit-backface-visibility:hidden; overflow:hidden;}
 .hz-face.front{transform:translateZ(calc(var(--thick) * .5 + .5px));}
 .hz-face.back{transform:rotateY(180deg) translateZ(calc(var(--thick) * .5 + .5px));}
 .hz-face svg{width:100%; height:100%; display:block;}
@@ -98,64 +82,76 @@
   background-size:260% 100%; background-position:120% 0;
 }
 .hz-veil{position:absolute; inset:0; background:var(--hz-black); opacity:0; pointer-events:none;}
+.hz-cue{display:none;}
 
-/* ---------- tablet and desktop: a cinematic two-column composition ---------- */
+/* ---------- desktop ---------- */
 @media (min-width:900px){
-  .hz-hero{--size:min(40vw, 540px, 64vh); --size:min(40vw, 540px, 64svh); padding:110px 0 56px;}
+  .hz-hero{--size:min(70vw, 820px, 94vh); --size:min(70vw, 820px, 94svh); padding:96px 0 72px;}
   .hz-bg{
     background:
-      radial-gradient(ellipse 52% 62% at 72% 42%, rgba(255,255,255,.11), transparent 62%),
-      radial-gradient(circle at 72% 56%, rgba(166,242,56,.13), transparent 46%),
-      conic-gradient(from 168deg at 74% -12%, transparent 0 4deg, rgba(255,255,255,.07) 14deg, transparent 26deg),
-      radial-gradient(ellipse at 60% 50%, transparent 52%, rgba(0,0,0,.55) 100%),
-      linear-gradient(to bottom, transparent 78%, #070807 100%),
+      radial-gradient(ellipse 60% 55% at 50% 42%, rgba(255,255,255,.08), transparent 64%),
+      radial-gradient(circle at 50% 50%, rgba(166,242,56,.11), transparent 50%),
+      conic-gradient(from 170deg at 50% -14%, transparent 0 5deg, rgba(255,255,255,.06) 15deg, transparent 27deg),
+      radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0,0,0,.58) 100%),
+      linear-gradient(to bottom, transparent 80%, #070807 100%),
       var(--hz-black);
   }
-  .hz-inner{display:grid; grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr); align-items:center; gap:24px;}
-  .hz-copy{grid-column:1; grid-row:1; max-width:520px;}
-  .hz-stage{grid-column:2; grid-row:1; height:min(76vh, 700px); height:min(76svh, 700px);}
-  .hz-hero h1{font-size:clamp(46px, 5.2vw, 82px); margin-top:20px;}
-  .hz-sub{font-size:17.5px; margin-top:22px;}
-  .hz-actions{flex-direction:row; align-items:center; gap:22px; margin-top:34px;}
-  .hz-link{align-self:auto;}
-  .hz-tags{margin-top:38px;}
+  .hz-hero h1{font-size:clamp(56px, min(8vw, 13.5vh), 108px); font-size:clamp(56px, min(8vw, 13.5svh), 108px); margin-top:20px;}
+  .hz-sub{font-size:18px; margin-top:26px;}
   .hz-cue{
-    display:block; position:absolute; left:50%; bottom:24px; width:22px; height:36px; margin-left:-11px;
-    border:1px solid rgba(255,255,255,.22); border-radius:14px;
+    display:block; position:absolute; left:50%; bottom:28px; width:22px; height:36px; margin-left:-11px; z-index:2;
+    border:1px solid rgba(255,255,255,.24); border-radius:14px; opacity:calc(1 - var(--p, 0) * 3);
   }
-  .hz-cue::before{content:""; position:absolute; top:7px; left:50%; width:2px; height:7px; margin-left:-1px; border-radius:2px; background:var(--hz-lime); opacity:.9;}
+  .hz-cue::before{content:""; position:absolute; top:7px; left:50%; width:2px; height:7px; margin-left:-1px; border-radius:2px; background:var(--hz-lime);}
 }
-
-/* very short laptop screens: keep everything above the fold */
 @media (min-width:900px) and (max-height:700px){
-  .hz-hero{padding-top:92px; padding-bottom:32px;}
-  .hz-tags{margin-top:24px;}
+  .hz-hero{padding-top:84px; padding-bottom:40px;}
   .hz-cue{display:none;}
 }
 
-/* ---------- motion (only for people who have not asked for less) ---------- */
+/* ---------- header while the hero is on screen: only the Enquire button, top right ---------- */
+header.hero-view{background:none; border-bottom-color:transparent; padding:16px 0;}
+header.hero-view .nav-wrap{justify-content:flex-end;}
+header.hero-view .nav-cta{
+  display:inline-flex; align-items:center; min-height:44px; background:var(--hz-lime); color:var(--hz-black);
+  box-shadow:0 0 0 0 rgba(166,242,56,0);
+  transition:background-color .3s ease, box-shadow .35s ease, color .3s ease;
+}
+header.hero-view .nav-cta:focus-visible{outline:2px solid var(--hz-white); outline-offset:3px;}
+@media (hover:hover){
+  header.hero-view .nav-cta:hover{background:#b9f95a; box-shadow:0 10px 30px -10px rgba(166,242,56,.6);}
+}
+header.hero-view .nav-cta:active{background:#98e02f;}
+
+/* ---------- motion: only for people who have not asked for less ---------- */
 @media (prefers-reduced-motion: no-preference){
-  .hz-veil{animation:hzVeil 1.3s ease-out .1s both;}
-  .hz-hero.loaded .hz-enter{animation:hzEnter 1.5s var(--ease) both;}
-  .hz-spin{animation:hzSpin 18s ease-in-out infinite;}
-  .hz-float{animation:hzFloat 7s ease-in-out infinite;}
-  .hz-sheen{animation:hzSheen 7.5s ease-in-out 1.8s infinite;}
-  .hz-halo{animation:hzBreathe 8s ease-in-out infinite;}
-  .hz-floor{animation:hzFloor 7s ease-in-out infinite;}
-  @media (min-width:900px){ .hz-sweep{animation:hzRotate 16s linear infinite;} }
+  .hz-line > span{transform:translateY(112%); transition:transform 1s var(--ease);}
+  .hz-hero.loaded .hz-line > span{transform:none;}
+  .hz-line:nth-child(2) > span{transition-delay:.14s;}
+  .hz-line:nth-child(3) > span{transition-delay:.28s;}
+  .hz-fade{transition:opacity .9s ease, transform .9s var(--ease);}
+  .hz-hero:not(.loaded) .hz-fade{opacity:0; transform:translateY(14px);}
+  header.hero-view .nav-cta{transition:background-color .3s ease, box-shadow .35s ease, color .3s ease, transform .35s var(--ease);}
+  @media (hover:hover){ header.hero-view .nav-cta:hover{transform:translateY(-2px);} }
+  header.hero-view .nav-cta:active{transform:translateY(0);}
+  .hz-hero.loaded .hz-copy .eyebrow{transition-delay:.05s;}
+  .hz-hero.loaded .hz-sub{transition-delay:.5s;}
+
+  .hz-veil{animation:hzVeil 1.6s ease-out .1s both;}
+  .hz-hero.loaded .hz-enter{animation:hzEnter 1.8s var(--ease) both;}
+  .hz-spin{animation:hzSpin 22s ease-in-out infinite;}
+  .hz-float{animation:hzFloat 8s ease-in-out infinite;}
+  .hz-sheen{animation:hzSheen 8s ease-in-out 2s infinite;}
+  .hz-halo{animation:hzBreathe 9s ease-in-out infinite;}
+  @media (min-width:900px){ .hz-sweep{animation:hzRotate 18s linear infinite;} }
   .hz-stage.paused *{animation-play-state:paused !important;}
+  header:not(.hero-view) .brand, header:not(.hero-view) .nav-links, header:not(.hero-view) .burger{animation:hzNavIn .55s ease both;}
 }
 @keyframes hzVeil{from{opacity:1}to{opacity:0}}
-@keyframes hzEnter{from{transform:translateY(44px) scale(.88)}to{transform:none}}
-@keyframes hzSpin{
-  0%,100%{transform:rotateX(8deg) rotateY(-30deg)}
-  50%{transform:rotateX(5deg) rotateY(30deg)}
-}
-@keyframes hzFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(var(--size) * -.035))}}
-@keyframes hzSheen{0%,55%{background-position:120% 0}100%{background-position:-60% 0}}
-@keyframes hzBreathe{0%,100%{opacity:.85}50%{opacity:1}}
-@keyframes hzFloor{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(.93)}}
+@keyframes hzEnter{from{transform:translateY(40px) scale(.84)}to{transform:none}}
+@keyframes hzSpin{0%,100%{transform:rotateX(8deg) rotateY(-30deg)} 50%{transform:rotateX(5deg) rotateY(30deg)}}
+@keyframes hzFloat{0%,100%{transform:translateY(0)} 50%{transform:translateY(calc(var(--size) * -.03))}}
+@keyframes hzSheen{0%,55%{background-position:120% 0} 100%{background-position:-60% 0}}
+@keyframes hzBreathe{0%,100%{opacity:.85} 50%{opacity:1}}
 @keyframes hzRotate{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion: reduce){
-  .hz-line > span{transform:none; transition:none;}
-}
+@keyframes hzNavIn{from{opacity:0} to{opacity:1}}

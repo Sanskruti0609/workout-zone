@@ -23,7 +23,9 @@ const FOOTER_EXTRA = [
 const INSTAGRAM_HANDLE = "workoutzone_parel";
 
 function ScrollManager() {
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, key } = useLocation();
+  // `key` changes on every navigation, so clicking Enquire again still scrolls to the form
+  // even when the address already ends in #contact.
   useEffect(() => {
     if (hash) {
       const id = decodeURIComponent(hash.slice(1));
@@ -31,22 +33,27 @@ function ScrollManager() {
       return () => clearTimeout(t);
     }
     window.scrollTo(0, 0);
-  }, [pathname, hash]);
+  }, [pathname, hash, key]);
   return null;
 }
 
 export default function Layout() {
   const [open, setOpen] = useState(false);
   const [solid, setSolid] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
   const progress = useRef(null);
   const { pathname } = useLocation();
   const { data: business } = useFetch("/api/business");
   const isHome = pathname === "/";
+  // On the homepage, while the hero is on screen, the header shows only the Enquire button.
+  // Once the visitor scrolls past the hero, the full navigation returns.
+  const heroView = isHome && !pastHero;
 
   useEffect(() => { setOpen(false); }, [pathname]);
   useEffect(() => {
     const onScroll = () => {
       setSolid(window.scrollY > 40);
+      setPastHero(window.scrollY > window.innerHeight * 0.65);
       const max = document.documentElement.scrollHeight - window.innerHeight;
       if (progress.current) progress.current.style.width = max > 0 ? `${Math.min(100, (window.scrollY / max) * 100)}%` : "0%";
     };
@@ -66,31 +73,39 @@ export default function Layout() {
     ? <NavLink key={n.to} to={n.to} className={({ isActive }) => (isActive ? "active" : "")} {...extra}>{n.label}</NavLink>
     : <Link key={n.to} to={n.to} {...extra}>{n.label}</Link>;
 
+  const menuOpen = open && !heroView;
+
   return (
     <>
       <ScrollManager />
       <div ref={progress} className="progress-fill" aria-hidden="true" />
-      <header className={solid || open ? "solid" : ""} id="siteHeader">
+      <header className={heroView ? "hero-view" : solid || open ? "solid" : ""} id="siteHeader">
         <div className="container nav-wrap">
-          <Link to="/" className="brand" aria-label="Workout Zone home">
-            <span className="logo-wrap"><img src="/workout_zone_logo.png" alt="" /></span>
-            <span className="brand-text">WORKOUT ZONE<span>Parel, Mumbai</span></span>
-          </Link>
-          <nav className="nav-links" aria-label="Main">{NAV.map((n) => item(n))}</nav>
+          {!heroView && (
+            <Link to="/" className="brand" aria-label="Workout Zone home">
+              <span className="logo-wrap"><img src="/workout_zone_logo.png" alt="" /></span>
+              <span className="brand-text">WORKOUT ZONE<span>Parel, Mumbai</span></span>
+            </Link>
+          )}
+          {!heroView && <nav className="nav-links" aria-label="Main">{NAV.map((n) => item(n))}</nav>}
           <div className="nav-right">
             <Link to="/#contact" className="btn btn-primary nav-cta">Enquire</Link>
-            <button type="button" className={`burger ${open ? "open" : ""}`} aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} aria-controls="mobileMenu" onClick={() => setOpen(!open)}>
-              <span className="lines"><span /><span /><span /></span>
-            </button>
+            {!heroView && (
+              <button type="button" className={`burger ${open ? "open" : ""}`} aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} aria-controls="mobileMenu" onClick={() => setOpen(!open)}>
+                <span className="lines"><span /><span /><span /></span>
+              </button>
+            )}
           </div>
         </div>
       </header>
 
-      <nav id="mobileMenu" className={`mobile-menu ${open ? "open" : ""}`} aria-label="Mobile" aria-hidden={!open} inert={!open ? "" : undefined}>
-        {NAV.map((n) => item(n, { onClick: () => setOpen(false) }))}
-        <Link to="/contact" className="btn btn-primary btn-block" onClick={() => setOpen(false)}>Contact the gym</Link>
-        {business && <div className="mobile-menu-foot">{business.address}</div>}
-      </nav>
+      {!heroView && (
+        <nav id="mobileMenu" className={`mobile-menu ${menuOpen ? "open" : ""}`} aria-label="Mobile" aria-hidden={!menuOpen} inert={!menuOpen ? "" : undefined}>
+          {NAV.map((n) => item(n, { onClick: () => setOpen(false) }))}
+          <Link to="/contact" className="btn btn-primary btn-block" onClick={() => setOpen(false)}>Contact the gym</Link>
+          {business && <div className="mobile-menu-foot">{business.address}</div>}
+        </nav>
+      )}
 
       <main id="main" className={isHome ? "" : "page"}><Outlet /></main>
 
@@ -126,10 +141,12 @@ export default function Layout() {
         </div>
       </footer>
 
-      <div className="mobile-cta">
-        {business ? <a href={telHref(business.phone)} className="wa"><Icon name="phone" />Call</a> : <span />}
-        <Link to="/#contact" className="join">Enquire</Link>
-      </div>
+      {!heroView && (
+        <div className="mobile-cta">
+          {business ? <a href={telHref(business.phone)} className="wa"><Icon name="phone" />Call</a> : <span />}
+          <Link to="/#contact" className="join">Enquire</Link>
+        </div>
+      )}
     </>
   );
 }
