@@ -7,6 +7,7 @@ const PATHS = {
   check: <path d="M5 13l4 4L19 7" />,
   left: <path d="M15 5l-7 7 7 7" />,
   right: <path d="M9 5l7 7-7 7" />,
+  users: <><circle cx="12" cy="8" r="3" /><circle cx="5.5" cy="10" r="2.2" /><circle cx="18.5" cy="10" r="2.2" /><path d="M6.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" /><path d="M2.5 17c0-2 1.5-3.4 3.2-3.8" /><path d="M21.5 17c0-2-1.5-3.4-3.2-3.8" /></>,
 };
 export default function Icon({ name, className, strokeWidth = 1.8 }) {
   return (

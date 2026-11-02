@@ -85,7 +85,9 @@ export default function HeroPlate() {
   return (
     <div className="hz-stage" ref={stage} aria-hidden="true">
       <div className="hz-halo" />
-      <div className="hz-sweep" />
+      <div className="hz-bloom" />
+      <div className="hz-rimglow" />
+      <div className="hz-rim" />
       <div className="hz-floor" />
       <div className="hz-enter">
         <div className="hz-tilt">
@@ -102,6 +104,7 @@ export default function HeroPlate() {
           </div>
         </div>
       </div>
+      <div className="hz-dim" />
       <div className="hz-veil" />
     </div>
   );

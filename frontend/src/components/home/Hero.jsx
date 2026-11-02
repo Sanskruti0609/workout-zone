@@ -1,11 +1,18 @@
 import { useEffect, useRef, useState } from "react";
+import { useFetch } from "../../hooks/useFetch.js";
+import Icon from "../common/Icon.jsx";
 import HeroPlate from "./HeroPlate.jsx";
 
-// Centered, minimal hero. The 3D plate sits behind the text at low opacity.
+// Centered hero: a glowing 3D plate behind the headline, with quiet side details.
 // While the page scrolls, --p (0 to 1) drives a gentle parallax: text lifts and fades, the plate turns and grows.
 export default function Hero() {
   const root = useRef(null);
   const [loaded, setLoaded] = useState(false);
+  const { data: services } = useFetch("/api/services");
+  // Only a number the gym's own data backs up: active services filed under "Training".
+  const trainingCount = Array.isArray(services)
+    ? services.filter((s) => (s.category || "").toLowerCase() === "training").length
+    : 0;
 
   useEffect(() => {
     const t = requestAnimationFrame(() => setLoaded(true));
@@ -38,6 +45,14 @@ export default function Hero() {
       <div className="hz-bg" aria-hidden="true" />
       <HeroPlate />
       <div className="hz-scrim" aria-hidden="true" />
+
+      <div className="hz-side hz-vtag" aria-hidden="true">
+        <span className="hz-vline short" />
+        <p>Train<i />Move<i />Grow</p>
+        <span className="hz-vline" />
+      </div>
+      <div className="hz-side hz-est" aria-hidden="true"><span>Est. Parel</span></div>
+
       <div className="container hz-copy">
         <div className="eyebrow hz-fade">Parel, Mumbai</div>
         <h1>
@@ -49,7 +64,13 @@ export default function Hero() {
           Build strength, improve endurance and transform your fitness journey at Workout Zone, Parel.
         </p>
       </div>
-      <div className="hz-cue" aria-hidden="true" />
+
+      <ul className="hz-side hz-chips" aria-label="Highlights">
+        {trainingCount > 0 && (
+          <li className="hz-chip"><div className="in"><b>{trainingCount}</b><span>Training<br />options</span></div></li>
+        )}
+        <li className="hz-chip"><div className="in"><Icon name="users" /><span>One strong<br />community</span></div></li>
+      </ul>
     </section>
   );
 }
